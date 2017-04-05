@@ -36,7 +36,7 @@ public class GameView extends GLSurfaceView{
     private float[] _MVPMatrix			= new float[16];
     private float zNear = 1f;
     private float zFar = 1000f;
-    public int direction_flag = 1;
+    public int direction_flag = 0;
     //private final int bg_width = 5000;
     //private final int bg_height = 1500;
     //private List<SGenome> m_vecThePopulation = new ArrayList<>();
@@ -265,6 +265,7 @@ public class GameView extends GLSurfaceView{
                                 Right();
                                 break;
                         }
+                        //snake.move(direction_flag);
                     }
                     sleep(100);
                     requestRender();
@@ -318,19 +319,19 @@ public class GameView extends GLSurfaceView{
     public void Right(){
         snake.Right();
     }
-    private boolean isCollision(BaseObject object1,BaseObject object2){
-        int x1 = object1.getX();
-        int y1 = object1.getY();
-        int radius1 = object1.getRadius();
-        int x2 = object2.getX();
-        int y2 = object2.getY();
-        int radius2 = object2.getRadius();
-        int distance = (int)Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
-        if(distance<=(radius1+radius2)){
-            return true;
-        }
-        return false;
-    }
+//    private boolean isCollision(BaseObject object1,BaseObject object2){
+//        int x1 = object1.getX();
+//        int y1 = object1.getY();
+//        int radius1 = object1.getRadius();
+//        int x2 = object2.getX();
+//        int y2 = object2.getY();
+//        int radius2 = object2.getRadius();
+//        int distance = (int)Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+//        if(distance<=(radius1+radius2)){
+//            return true;
+//        }
+//        return false;
+//    }
     private int Random(int temp){
         int value = (int)(Math.random()*temp);
         return Math.random()>0.5?value:-value;

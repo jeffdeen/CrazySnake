@@ -1,5 +1,7 @@
 package com.example.jeffdeen.snakeproject.GameObjects;
 
+import android.util.Log;
+
 import com.example.jeffdeen.snakeproject.GameView;
 import com.example.jeffdeen.snakeproject.Util.CParams;
 import com.example.jeffdeen.snakeproject.Util.Vector2D;
@@ -13,7 +15,7 @@ import java.util.List;
  */
 
 public class Snake {
-    public List<BaseObject> snakeBodyList = new ArrayList<>();
+    public List<SnakeBody> snakeBodyList = new ArrayList<>();
     private GameView view;
 
     private float r;
@@ -24,11 +26,11 @@ public class Snake {
     private int m_iClosest_obstacle = 0;
     private int temp_length = 0;
     private GameView gameView;
-    private int m_iDirection_flag = 1;
     private final int UP_FLAG = 0;
     private final int DOWN_FLAG = 1;
     private final int LEFT_FLAG = 2;
     private final int RIGHT_FLAG = 3;
+
     //private AI_result avoidObstacle2;
     public Snake(int x, int y, float r, float g, float b, GameView view){
         this.view = view;
@@ -48,8 +50,9 @@ public class Snake {
             return new SnakeBody(object1.getX()-100,object2.getY(),
                     object1.getColor()[0],object1.getColor()[1],object1.getColor()[2],view);
         }else{
-            int x = object2.getX()-object1.getX()+object2.getX();
-            int y = object2.getY()-object1.getY()+object2.getY();
+            float x = object2.getX()-object1.getX()+object2.getX();
+            float y = object2.getY()-object1.getY()+object2.getY();
+            Log.d("YValue",""+(object2.getY()-object1.getY()));
             return new SnakeBody(x,y,object1.getColor()[0],object1.getColor()[1],object1.getColor()[2],view);
         }
 
@@ -103,7 +106,7 @@ public class Snake {
         double temp_distance = Math.sqrt(Math.pow(vClosestObstacleCord.x,2) +
                 Math.pow(vClosestObstacleCord.y,2));
 
-        if(temp_distance<120){
+        if(temp_distance<100){
             dead(foods);
         }
 
@@ -142,11 +145,185 @@ public class Snake {
 //            }
             snakeBodyList.get(i).setCoordinate(snakeBodyList.get(i-1).getX(),snakeBodyList.get(i-1).getY());
         }
-        snakeBodyList.get(0).setY(snakeBodyList.get(0).getY()+45);
+        snakeBodyList.get(0).setY(snakeBodyList.get(0).getY()+(80/CParams.ratio));
         //m_iDirection_flag = UP_FLAG;
         //snakeBodyList.get(0).Up();
     }
+
+    public void move(int flag){
+        snakeBodyList.get(0).setM_iDirection(flag);
+        snakeBodyList.get(0).Move();
+        for(int i=1;i<snakeBodyList.size();++i){
+            MoveIteration(snakeBodyList.get(i-1),snakeBodyList.get(i));
+        }
+    }
+
+    public void MoveIteration(SnakeBody body1,SnakeBody body2){
+        switch (body1.getM_iDirection()){
+            case UP_FLAG:
+                UpDown(body1,body2);
+                break;
+            case DOWN_FLAG:
+                UpDown(body1,body2);
+                break;
+            case LEFT_FLAG:
+                LeftRight(body1,body2);
+                break;
+            case RIGHT_FLAG:
+                LeftRight(body1,body2);
+                break;
+        }
+
+    }
+
+    private void UpDown(SnakeBody body1,SnakeBody body2){
+        if(body1.getM_iDirection()!=body2.getM_iDirection()){
+            if(Math.abs(body1.getY()-body2.getY())==56){
+                body2.setM_iDirection(body1.getM_iDirection());
+                body2.Move();
+            }else{
+                if(body2.getM_iDirection()==RIGHT_FLAG){
+                    if(body2.getX()<=body1.getX())
+                        body2.Move();
+                }else if(body2.getM_iDirection()==LEFT_FLAG){
+                    if(body2.getX()>=body1.getX())
+                        body2.Move();
+                }
+            }
+        }else{
+            if(Math.abs(body1.getX()-body2.getX())>=100 ||
+                    Math.abs(body1.getY()-body2.getY())>=56)
+                body2.Move();
+        }
+    }
+    private void LeftRight(SnakeBody body1,SnakeBody body2){
+        if(body1.getM_iDirection()!=body2.getM_iDirection()){
+            if(Math.abs(body1.getX()-body2.getX())>=100){
+                body2.setM_iDirection(body1.getM_iDirection());
+                body2.Move();
+            }else{
+                if(body2.getM_iDirection()==UP_FLAG){
+                    if(body2.getY()<=body1.getY())
+                        body2.Move();
+                }else if(body2.getM_iDirection()==DOWN_FLAG){
+                    if(body2.getY()>=body1.getY())
+                        body2.Move();
+                }
+            }
+        }else{
+            if(Math.abs(body1.getX()-body2.getX())>=100 ||
+                    Math.abs(body1.getY()-body2.getY())>=56)
+                body2.Move();
+        }
+    }
+
+
+    public void Up2(){
+        snakeBodyList.get(0).setM_iDirection(UP_FLAG);
+        snakeBodyList.get(0).Move();
+        for(int i = 1;i<snakeBodyList.size();++i){
+            if(snakeBodyList.get(i-1).getM_iDirection()!=snakeBodyList.get(i).getM_iDirection()){
+                if(Math.abs(snakeBodyList.get(i-1).getY()-snakeBodyList.get(i).getY())==56){
+                    snakeBodyList.get(i).setM_iDirection(UP_FLAG);
+                    snakeBodyList.get(i).Move();
+                }else{
+                    if(snakeBodyList.get(i).getM_iDirection()==RIGHT_FLAG){
+                        if(snakeBodyList.get(i).getX()<=snakeBodyList.get(i-1).getX())
+                            snakeBodyList.get(i).Move();
+                    }else if(snakeBodyList.get(i).getM_iDirection()==LEFT_FLAG){
+                        if(snakeBodyList.get(i).getX()>=snakeBodyList.get(i-1).getX())
+                            snakeBodyList.get(i).Move();
+                    }else if(snakeBodyList.get(i).getM_iDirection()==UP_FLAG){
+
+                    }
+                }
+
+            }else{
+                if(Math.abs(snakeBodyList.get(i-1).getX()-snakeBodyList.get(i).getX())>=80 ||
+                        Math.abs(snakeBodyList.get(i-1).getY()-snakeBodyList.get(i).getY())>=(80/CParams.ratio))
+                    snakeBodyList.get(i).Move();
+            }
+        }
+
+    }
+    public void Down2(){
+        snakeBodyList.get(0).setM_iDirection(DOWN_FLAG);
+        snakeBodyList.get(0).Move();
+        for(int i = 1;i<snakeBodyList.size();++i){
+            if(snakeBodyList.get(i-1).getM_iDirection()!=snakeBodyList.get(i).getM_iDirection()){
+                if(Math.abs(snakeBodyList.get(i-1).getY()-snakeBodyList.get(i).getY())==(80/CParams.ratio)){
+                    snakeBodyList.get(i).setM_iDirection(DOWN_FLAG);
+                    snakeBodyList.get(i).Move();
+                }
+                else{
+                    if(snakeBodyList.get(i).getM_iDirection()==RIGHT_FLAG){
+                        if(snakeBodyList.get(i).getX()<=snakeBodyList.get(i-1).getX())
+                            snakeBodyList.get(i).Move();
+                    }else if(snakeBodyList.get(i).getM_iDirection()==LEFT_FLAG){
+                        if(snakeBodyList.get(i).getX()>=snakeBodyList.get(i-1).getX())
+                            snakeBodyList.get(i).Move();
+                    }
+                }
+            }else{
+                if(Math.abs(snakeBodyList.get(i-1).getX()-snakeBodyList.get(i).getX())>=80 ||
+                        Math.abs(snakeBodyList.get(i-1).getY()-snakeBodyList.get(i).getY())>=(80/CParams.ratio))
+                    snakeBodyList.get(i).Move();
+            }
+
+        }
+    }
+    public void Left2(){
+        snakeBodyList.get(0).setM_iDirection(LEFT_FLAG);
+        snakeBodyList.get(0).Move();
+        for(int i = 1;i<snakeBodyList.size();++i){
+            if(snakeBodyList.get(i-1).getM_iDirection()!=snakeBodyList.get(i).getM_iDirection()){
+                if(Math.abs(snakeBodyList.get(i-1).getX()-snakeBodyList.get(i).getX())>=80){
+                    snakeBodyList.get(i).setM_iDirection(LEFT_FLAG);
+                    snakeBodyList.get(i).Move();
+                }
+                else{
+                    if(snakeBodyList.get(i).getM_iDirection()==UP_FLAG){
+                        if(snakeBodyList.get(i).getY()<=snakeBodyList.get(i-1).getY())
+                            snakeBodyList.get(i).Move();
+                    }else if(snakeBodyList.get(i).getM_iDirection()==DOWN_FLAG){
+                        if(snakeBodyList.get(i).getY()>=snakeBodyList.get(i-1).getY())
+                            snakeBodyList.get(i).Move();
+                    }
+                }
+            }else{
+                if(Math.abs(snakeBodyList.get(i-1).getX()-snakeBodyList.get(i).getX())>=80 ||
+                        Math.abs(snakeBodyList.get(i-1).getY()-snakeBodyList.get(i).getY())>=(80/CParams.ratio))
+                    snakeBodyList.get(i).Move();
+            }
+        }
+    }
+    public void Right2(){
+        snakeBodyList.get(0).setM_iDirection(RIGHT_FLAG);
+        snakeBodyList.get(0).Move();
+        for(int i = 1;i<snakeBodyList.size();++i){
+            if(snakeBodyList.get(i-1).getM_iDirection()!=snakeBodyList.get(i).getM_iDirection()){
+                if(Math.abs(snakeBodyList.get(i-1).getX()-snakeBodyList.get(i).getX())>=80){
+                    snakeBodyList.get(i).setM_iDirection(RIGHT_FLAG);
+                    snakeBodyList.get(i).Move();
+                }
+                else{
+                    if(snakeBodyList.get(i).getM_iDirection()==UP_FLAG){
+                        if(snakeBodyList.get(i).getY()<=snakeBodyList.get(i-1).getY())
+                            snakeBodyList.get(i).Move();
+                    }else if(snakeBodyList.get(i).getM_iDirection()==DOWN_FLAG){
+                        if(snakeBodyList.get(i).getY()>=snakeBodyList.get(i-1).getY())
+                            snakeBodyList.get(i).Move();
+                    }
+                }
+            }else{
+                if(Math.abs(snakeBodyList.get(i-1).getX()-snakeBodyList.get(i).getX())>=80 ||
+                        Math.abs(snakeBodyList.get(i-1).getY()-snakeBodyList.get(i).getY())>=(80/CParams.ratio))
+                    snakeBodyList.get(i).Move();
+            }
+        }
+    }
     public void Down(){
+
         for(int i=(length()-1);i>0;--i){
 //            int x1 = snakeBodyList.get(i).getX();
 //            int y1 = snakeBodyList.get(i).getY();
@@ -161,7 +338,7 @@ public class Snake {
 //            }
             snakeBodyList.get(i).setCoordinate(snakeBodyList.get(i-1).getX(),snakeBodyList.get(i-1).getY());
         }
-        snakeBodyList.get(0).setY(snakeBodyList.get(0).getY()-45);
+        snakeBodyList.get(0).setY(snakeBodyList.get(0).getY()-(80/CParams.ratio));
         //snakeBodyList.get(0).Down();
     }
     public void Left(){
@@ -223,8 +400,8 @@ public class Snake {
     public void dead(List<BaseObject> foods){
         gameView.rthread.flag = false;
         for(int i=0;i<length();++i){
-            int x = snakeBodyList.get(i).getX();
-            int y = snakeBodyList.get(i).getY();
+            float x = snakeBodyList.get(i).getX();
+            float y = snakeBodyList.get(i).getY();
             snakeBodyList.get(i).setCoordinate(x+Random(10),y+Random(10));
             BaseObject object = snakeBodyList.get(i);
             object.setRadius(30);
@@ -236,4 +413,6 @@ public class Snake {
         snakeBodyList.add(generateBody(snakeBodyList.get(0),snakeBodyList.get(0)));
         total_length = 20;
     }
+
+
 }

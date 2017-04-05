@@ -30,7 +30,7 @@ public class AI_snake {
     private int m_iClosest_obstacle = 0;
     private int temp_length = 0;
     //private AI_result avoidObstacle2;
-    public AI_snake(int x,int y,float r,float g,float b, GameView view){
+    public AI_snake(float x,float y,float r,float g,float b, GameView view){
         this.view = view;
         this.r = r;
         this.g = g;
@@ -54,8 +54,8 @@ public class AI_snake {
             return new SnakeBody(object1.getX()-100,object2.getY(),
                     object1.getColor()[0],object1.getColor()[1],object1.getColor()[2],view);
         }else{
-            int x = object2.getX()-object1.getX()+object2.getX();
-            int y = object2.getY()-object1.getY()+object2.getY();
+            float x = object2.getX()-object1.getX()+object2.getX();
+            float y = object2.getY()-object1.getY()+object2.getY();
             return new SnakeBody(x,y,object1.getColor()[0],object1.getColor()[1],object1.getColor()[2],view);
         }
 
@@ -119,7 +119,7 @@ public class AI_snake {
         int sign2   = Vector2D.Vec2DSign(snakeDirectionVec,vClosestObstacleCord);
         double dot2 = Vector2D.Vec2DDot(snakeDirectionVec,vClosestObstacleCord);
         List<Double> output = new ArrayList<>();
-        if(temp_distance<120){
+        if(temp_distance<100){
             dead(foods);
         }
         if(temp_distance<350) {
@@ -442,8 +442,8 @@ public class AI_snake {
     }
     private void dead(List<BaseObject> foods){
         for(int i=0;i<length();++i){
-            int x = snakeBodyList.get(i).getX();
-            int y = snakeBodyList.get(i).getY();
+            float x = snakeBodyList.get(i).getX();
+            float y = snakeBodyList.get(i).getY();
             snakeBodyList.get(i).setCoordinate(x+Random(10),y+Random(10));
             BaseObject object = snakeBodyList.get(i);
             object.setRadius(30);

@@ -15,8 +15,8 @@ import java.nio.FloatBuffer;
  */
 
 public class BaseObject {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
     private int radius = 15;
     private FloatBuffer mVertexBuffer;
     private float[] color = new float[3];
@@ -31,7 +31,7 @@ public class BaseObject {
     private  int maColorHandle; //顶点颜色属性引用id
 
 
-    public BaseObject(int x, int y, float r, float g, float b, GameView mv) {
+    public BaseObject(float x, float y, float r, float g, float b, GameView mv) {
         this.x = x;
         this.y = y;
         this.color[0] = r;
@@ -41,7 +41,6 @@ public class BaseObject {
     }
     private void initVertexData()
     {
-
         gl_x = x/(1920/2.0f);
         gl_y = y/(1080/2.0f);
         float gl_radius = this.radius/(1920/2.0f);
@@ -98,16 +97,16 @@ public class BaseObject {
         return radius;
     }
 
-    public void setCoordinate(int x, int y){
+    public void setCoordinate(float x, float y){
         this.x = x;
         this.y = y;
     }
     public float[] getColor() {return color;}
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
@@ -119,11 +118,11 @@ public class BaseObject {
         return gl_y;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(float y) {
         this.y = y;
     }
 

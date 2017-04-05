@@ -20,4 +20,5 @@ public class CParams {
     public static int iNumElite = 4;
     public static double dMutationRate = 0.1;
     public static double dCrossoverRate = 0.7;
+    public static float ratio = 1.7778f;
 }
